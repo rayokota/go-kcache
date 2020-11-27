@@ -1,4 +1,4 @@
-package encode
+package serde
 
 import (
 	"encoding"
@@ -11,7 +11,7 @@ import (
 func Unmarshal(b []byte, v interface{}) error {
 	switch v := v.(type) {
 	case nil:
-		return fmt.Errorf("redis: Scan(nil)")
+		return fmt.Errorf("Scan(nil)")
 	case *string:
 		*v = BytesToString(b)
 		return nil
@@ -107,7 +107,7 @@ func Unmarshal(b []byte, v interface{}) error {
 		return v.UnmarshalBinary(b)
 	default:
 		return fmt.Errorf(
-			"redis: can't unmarshal %T (consider implementing BinaryUnmarshaler)", v)
+			"can't unmarshal %T (consider implementing BinaryUnmarshaler)", v)
 	}
 }
 

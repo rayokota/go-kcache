@@ -1,4 +1,4 @@
-package encode
+package serde
 
 import "strconv"
 

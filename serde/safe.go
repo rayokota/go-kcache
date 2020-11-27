@@ -1,6 +1,6 @@
 // +build appengine
 
-package encode
+package serde
 
 func BytesToString(b []byte) string {
 	return string(b)

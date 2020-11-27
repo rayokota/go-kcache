@@ -1,6 +1,6 @@
 // +build !appengine
 
-package encode
+package serde
 
 import (
 	"unsafe"
