@@ -13,18 +13,18 @@ func TestKCache(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	println("start init")
+	fmt.Println("start init")
 	c.Init()
-	println("done init")
+	fmt.Println("done init")
 
 	c.Put("hi", "there")
-	println("done putting")
+	fmt.Println("done putting")
 
 	c.Put("hi2", "there")
-	println("done putting")
+	fmt.Println("done putting")
 
 	c.Put("bye", "where")
-	println("done putting")
+	fmt.Println("done putting")
 
 	v, _ := c.Get("hi")
 	fmt.Printf("%v\n", v)
