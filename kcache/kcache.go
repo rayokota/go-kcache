@@ -127,7 +127,7 @@ func (c *KCache) Init() error {
 			}
 			c.CondVar.L.Lock()
 			c.Offsets[msg.TopicPartition.Partition] = msg.TopicPartition.Offset
-			c.CondVar.Signal()
+			c.CondVar.Broadcast()
 			c.CondVar.L.Unlock()
 		}
 	}()
