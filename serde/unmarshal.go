@@ -2,6 +2,7 @@ package serde
 
 import (
 	"encoding"
+	"encoding/json"
 	"fmt"
 	"time"
 )
@@ -106,8 +107,7 @@ func Unmarshal(b []byte, v interface{}) error {
 	case encoding.BinaryUnmarshaler:
 		return v.UnmarshalBinary(b)
 	default:
-		return fmt.Errorf(
-			"can't unmarshal %T (consider implementing BinaryUnmarshaler)", v)
+		return json.Unmarshal(b, v)
 	}
 }
 

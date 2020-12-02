@@ -2,7 +2,7 @@ package serde
 
 import (
 	"encoding"
-	"fmt"
+	"encoding/json"
 	"strconv"
 	"time"
 )
@@ -73,7 +73,11 @@ func Marshal(v interface{}, b *[]byte) error {
 		*b = append(*b, bytes...)
 		return nil
 	default:
-		return fmt.Errorf(
-			"can't marshal %T (implement encoding.BinaryMarshaler)", v)
+		bytes, err := json.Marshal(v)
+		if err != nil {
+			return err
+		}
+		*b = append(*b, bytes...)
+		return nil
 	}
 }
