@@ -13,7 +13,7 @@ type Deserializer interface {
 	FromBytes(bytes []byte) (interface{}, error)
 }
 
-type StringSerde struct {}
+type StringSerde struct{}
 
 func (serde StringSerde) ToBytes(v interface{}) ([]byte, error) {
 	var b []byte

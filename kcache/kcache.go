@@ -10,27 +10,27 @@ import (
 )
 
 type CacheUpdateHandler interface {
-    update(key interface{}, value interface{})
+	update(key interface{}, value interface{})
 }
 
 type KCache struct {
-	Topic string
+	Topic                    string
 	DesiredReplicationFactor int32
-	DesiredNumPartitions int32
-	GroupId string
-	ClientId string
-	CacheUpdateHandler *CacheUpdateHandler
-	KeySerde serde.Serde
-	ValueSerde serde.Serde
-	LocalCache *treemap.Map
-	Initialized bool // Arc<AtomicBool>,
-	RequireCompact bool
-	InitTimeout int64
-	Timeout int64
-	BootstrapBrokers string
-	Producer *kafka.Producer
-	Offsets map[int32]kafka.Offset
-	CondVar *sync.Cond
+	DesiredNumPartitions     int32
+	GroupId                  string
+	ClientId                 string
+	CacheUpdateHandler       *CacheUpdateHandler
+	KeySerde                 serde.Serde
+	ValueSerde               serde.Serde
+	LocalCache               *treemap.Map
+	Initialized              bool // Arc<AtomicBool>,
+	RequireCompact           bool
+	InitTimeout              int64
+	Timeout                  int64
+	BootstrapBrokers         string
+	Producer                 *kafka.Producer
+	Offsets                  map[int32]kafka.Offset
+	CondVar                  *sync.Cond
 }
 
 func New(bootstrapBrokers string,
@@ -70,9 +70,9 @@ func New(bootstrapBrokers string,
 func (c *KCache) Init() error {
 	// TODO create topic
 	consumer, err := kafka.NewConsumer(&kafka.ConfigMap{
-		"bootstrap.servers": c.BootstrapBrokers,
-		"group.id": c.GroupId,
-		"auto.offset.reset": "earliest",
+		"bootstrap.servers":  c.BootstrapBrokers,
+		"group.id":           c.GroupId,
+		"auto.offset.reset":  "earliest",
 		"enable.auto.commit": "false",
 	})
 	if err != nil {
@@ -185,8 +185,8 @@ func (c *KCache) mutate(key interface{}, value interface{}) (oldValue interface{
 			Topic:     &c.Topic,
 			Partition: partition,
 		},
-		Value:          valueBytes,
-		Key:            keyBytes,
+		Value: valueBytes,
+		Key:   keyBytes,
 	}
 	err = c.Producer.Produce(&message, deliveryChan)
 	if err != nil {

@@ -22,10 +22,10 @@ func TestStringSerde(t *testing.T) {
 
 type TestStruct struct {
 	Field1 string `json:"field1"`
-	Field2 int32 `json:"field2"`
+	Field2 int32  `json:"field2"`
 }
 
-type TestStructSerde struct {}
+type TestStructSerde struct{}
 
 func (serde TestStructSerde) ToBytes(v interface{}) ([]byte, error) {
 	var b []byte
@@ -47,7 +47,7 @@ func (serde TestStructSerde) FromBytes(bytes []byte) (interface{}, error) {
 
 func TestJSONSerde(t *testing.T) {
 	serde := TestStructSerde{}
-	s := TestStruct {
+	s := TestStruct{
 		Field1: "value",
 		Field2: 2,
 	}
