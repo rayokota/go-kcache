@@ -205,6 +205,10 @@ func (c *KCache) mutate(key interface{}, value interface{}) (oldValue interface{
 	return
 }
 
+func (c *KCache) Select(f func(key interface{}, value interface{}) bool) *treemap.Map {
+	return c.Select(f)
+}
+
 func (c *KCache) Size() int {
 	return c.LocalCache.Size()
 }
