@@ -72,6 +72,7 @@ func New(bootstrapBrokers string,
 
 func (c *KCache) Init() error {
 	c.createTopic(c.Topic)
+
 	consumer, err := kafka.NewConsumer(&kafka.ConfigMap{
 		"bootstrap.servers":  c.BootstrapBrokers,
 		"group.id":           c.GroupId,
@@ -191,7 +192,6 @@ func (c *KCache) createTopic(topic string) {
 	}
 
 	adminClient.Close()
-
 }
 
 func (c *KCache) waitUntilOffset(partition int32, offset kafka.Offset) {
