@@ -1,12 +1,15 @@
 package kcache
 
 import (
+	"context"
 	"fmt"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/emirpasic/gods/maps/treemap"
 	"github.com/emirpasic/gods/utils"
 	"github.com/rayokota/go-kcache/serde"
+	"os"
 	"sync"
+	"time"
 )
 
 type CacheUpdateHandler interface {
@@ -48,7 +51,7 @@ func New(bootstrapBrokers string,
 
 	c := new(KCache)
 	c.Topic = "_schemas"
-	c.DesiredReplicationFactor = 3
+	c.DesiredReplicationFactor = 1
 	c.DesiredNumPartitions = 1
 	c.GroupId = "kafkacache"
 	c.ClientId = "kafkacache-reader-schemas"
@@ -68,7 +71,7 @@ func New(bootstrapBrokers string,
 }
 
 func (c *KCache) Init() error {
-	// TODO create topic
+	c.createTopic(c.Topic)
 	consumer, err := kafka.NewConsumer(&kafka.ConfigMap{
 		"bootstrap.servers":  c.BootstrapBrokers,
 		"group.id":           c.GroupId,
@@ -138,6 +141,57 @@ func (c *KCache) Init() error {
 	}
 	c.Initialized = true
 	return nil
+}
+
+func (c *KCache) createTopic(topic string) {
+
+	adminClient, err := kafka.NewAdminClient(&kafka.ConfigMap{
+		"bootstrap.servers":       c.BootstrapBrokers})
+
+	if err != nil {
+		fmt.Printf("Failed to create Admin client: %s\n", err)
+		os.Exit(1)
+	}
+
+	// Contexts are used to abort or limit the amount of time
+	// the Admin call blocks waiting for a result.
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// Create topics on cluster.
+	// Set Admin options to wait for the operation to finish (or at most 60s)
+	maxDuration, err := time.ParseDuration("60s")
+	if err != nil {
+		panic("time.ParseDuration(60s)")
+	}
+
+	results, err := adminClient.CreateTopics(ctx,
+
+		[]kafka.TopicSpecification{{
+			Topic:             topic,
+			NumPartitions:     int(c.DesiredNumPartitions),
+			ReplicationFactor: int(c.DesiredReplicationFactor),
+			Config:            map[string]string{"cleanup.policy": "compact"},
+		}},
+		kafka.SetAdminOperationTimeout(maxDuration))
+
+	if err != nil {
+		fmt.Printf("Problem during the topic creation: %v\n", err)
+		os.Exit(1)
+	}
+
+	// Check for specific topic errors
+	for _, result := range results {
+		if result.Error.Code() != kafka.ErrNoError &&
+			result.Error.Code() != kafka.ErrTopicAlreadyExists {
+			fmt.Printf("Topic creation failed for %s: %v",
+				result.Topic, result.Error.String())
+			os.Exit(1)
+		}
+	}
+
+	adminClient.Close()
+
 }
 
 func (c *KCache) waitUntilOffset(partition int32, offset kafka.Offset) {
