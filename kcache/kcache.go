@@ -145,7 +145,6 @@ func (c *KCache) Init() error {
 }
 
 func (c *KCache) createTopic(topic string) {
-
 	adminClient, err := kafka.NewAdminClient(&kafka.ConfigMap{
 		"bootstrap.servers":       c.BootstrapBrokers})
 
@@ -167,7 +166,6 @@ func (c *KCache) createTopic(topic string) {
 	}
 
 	results, err := adminClient.CreateTopics(ctx,
-
 		[]kafka.TopicSpecification{{
 			Topic:             topic,
 			NumPartitions:     int(c.DesiredNumPartitions),
