@@ -146,7 +146,7 @@ func (c *KCache) Init() error {
 
 func (c *KCache) createTopic(topic string) {
 	adminClient, err := kafka.NewAdminClient(&kafka.ConfigMap{
-		"bootstrap.servers":       c.BootstrapBrokers})
+		"bootstrap.servers": c.BootstrapBrokers})
 
 	if err != nil {
 		fmt.Printf("Failed to create Admin client: %s\n", err)
