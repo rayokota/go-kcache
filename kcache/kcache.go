@@ -49,6 +49,25 @@ func New(bootstrapBrokers string,
 		return nil, err
 	}
 
+	// Listen to all the client instance-level errors.
+	go func() {
+		for e := range producer.Events() {
+			switch ev := e.(type) {
+			case kafka.Error:
+				// Generic client instance-level errors, such as
+				// broker connection failures, authentication issues, etc.
+				//
+				// These errors should generally be considered informational
+				// as the underlying client will automatically try to
+				// recover from any errors encountered, the application
+				// does not need to take action on them.
+				fmt.Printf("Error: %v\n", ev)
+			default:
+				fmt.Printf("Ignored event: %s\n", ev)
+			}
+		}
+	}()
+
 	c := new(KCache)
 	c.Topic = "_schemas"
 	c.DesiredReplicationFactor = 1
